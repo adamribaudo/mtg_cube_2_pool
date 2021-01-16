@@ -1,11 +1,11 @@
 library(tidyverse)
 
-# Split 540 cards into 8 sealed pools
+# Split cards into 8 sealed pools. Remainder cards are discarded
 num_groups <- 8
 cube <- read_delim("sample_cube.txt", col_names = F, delim = "|")
 num_cards <- nrow(cube)
 
-# Create n groups of randomly shuffled cards. Each group has an equal number of cards which means some cards from the cube can be discarded.
+# Create n groups of randomly shuffled cards
 groups <- cube %>% 
   sample_n(num_cards) %>% 
   slice_head(n = floor(num_cards/num_groups) * num_groups) %>% 
@@ -13,5 +13,5 @@ groups <- cube %>%
   nest %>% 
   pull(data)
 
-# Take the n groups of cards and write each to deckn.txt
+# Take the n groups of cards and write each to deck_.txt
 Map(function(x, i) write_delim(x, paste0("deck",i,".txt"),delim = "|", col_names = F), groups, seq_along(groups))
